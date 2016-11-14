@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
+#include "nvram_hook.h"
 #define NVRAM_PRELOAD_INIT if(init == 0){ init = 1; __init(); }
 #define BUFSIZE 1024
 
@@ -43,6 +44,14 @@ void nvram_load_value(char *name, char *data)
 
 void __init()
 {
+  filedb = getenv("NVRAM_ASK");
+  if(filedb == NULL)
+  {
+    if(strcmp(filedb,"true") == 0 || strcmp(filedb,"TRUE") == 0)
+    {
+      nvram_ask = 1;
+    } 
+  }
   filedb = getenv("NVRAM_DB");
   if(filedb == NULL)
   {
@@ -59,7 +68,7 @@ void __init()
     exit(0);
   }
   char nvram_data[BUFSIZE];
-  char *nvram_value_start = NULL;
+  // char *nvram_value_start = NULL;
   int nvram_load_value_count = 0;
   while(fgets(nvram_data,BUFSIZE,f))
   {
@@ -96,6 +105,18 @@ int nvram_close()
   NVRAM_PRELOAD_INIT;
   printf(" [nvram] nvram_close()...\n");
   return 0;
+}
+
+char *nvram_get(char *bufstr)
+{
+  NVRAM_PRELOAD_INIT;
+  return nvram_bufget(0,bufstr);
+}
+
+int nvram_set(char *name, char *value)
+{
+  NVRAM_PRELOAD_INIT; 
+  return nvram_bufset(0,name,value);
 }
 
 char *nvram_bufget(int mode, char *bufstr)
@@ -148,7 +169,7 @@ char *nvram_bufget(int mode, char *bufstr)
 int nvram_bufset(int mode, char *bufstr, char *bufvalue)
 {
   NVRAM_PRELOAD_INIT;
-  printf(" [nvram] bufset(\"%s\",\"%s\")...\n");
+  printf(" [nvram] bufset(\"%s\",\"%s\")...\n"); 
   return 0;
 }
 
