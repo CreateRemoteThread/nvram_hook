@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nvram_hook.h"
+
 #define NVRAM_PRELOAD_INIT if(init == 0){ init = 1; __init(); }
 #define BUFSIZE 1024
 
@@ -19,6 +20,7 @@ int init = 0;
 int nvram_ask = 0;
 char *default_filedb = "/tmp/nvram.dat";
 char *filedb = NULL;
+char *default_cms = "/tmp/cms.dat";
 
 void nvram_load_value(char *name, char *data)
 {
@@ -179,3 +181,34 @@ int nvram_commit()
   return 0;
 }
 
+int cmsMsg_init(int code, char *msgHandle)
+{
+  return 0;
+}
+
+int cmsMdm_init(int code, char *msgHandle)
+{
+  return 0;
+}
+
+int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle)
+{
+  return 0;
+}
+
+int cmsLck_releaseLockWithTimeoutTraced(char *msgHandle)
+{
+  return 0;
+}
+
+char *cmsObj_get(char *request)
+{
+  printf(" [cms_hook] hit cmsObj_get with %s\n",request);
+  return NULL;
+}
+
+char *cmsObj_free(char *obj)
+{
+  printf(" [cms_hook] hit cmsObj_free with %p\n",obj);
+  return NULL;
+}
