@@ -12,6 +12,9 @@ struct nvram_entry{
   struct nvram_entry *next;
 } nvram_entry;
 
+char *logLevel_debug = "Debug";
+char *fake_HTTP_CFG[2] = {NULL,NULL};
+
 struct nvram_entry *head = NULL;
 
 FILE *f = NULL;
@@ -200,9 +203,15 @@ int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
 }
 
 // HTTPD_CFG = 0xC
-int cmsObj_get(int request_type,int *arg2, int arg3, int *arg4)
+char *cmsObj_get(int request_type,int *arg2, int arg3, int *arg4)
 {
   printf(" [cms_hook] hit cmsObj_get with (%d,%p,%d,%p)\n",request_type,arg2,arg3,arg4);
+  if(request_type == 0xC)
+  {
+    printf(" [cms_hook] request for HTTP_CFG, faking reply\n");
+    fake_HTTP_CFG[1] = logLevel_debug;
+    return (char *)(&fake_HTTP_CFG);
+  }
   _memory_peek((char *)arg2);
   _memory_peek((char *)arg4); 
   printf(" [cms_hook] faking result: ARG2[0] = 1, ARG4[0] = 1\n");
