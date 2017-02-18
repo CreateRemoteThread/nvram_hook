@@ -183,21 +183,25 @@ int nvram_commit()
 
 int cmsMsg_init(int code, char *msgHandle)
 {
+  printf(" [cms_hook] cmsMsg_init called\n");
   return 0;
 }
 
 int cmsMdm_init(int code, char *msgHandle)
 {
+  printf(" [cms_hook] cmsMdm_init called\n");
   return 0;
 }
 
 int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle)
 {
+  printf(" [cms_hook] acquiring lock\n");
   return 0;
 }
 
 int cmsLck_releaseLockWithTimeoutTraced(char *msgHandle)
 {
+  printf(" [cms_hook] releasing lock\n");
   return 0;
 }
 
