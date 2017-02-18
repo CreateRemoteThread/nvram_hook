@@ -195,24 +195,13 @@ int cmsMdm_init(int code, char *msgHandle)
 
 int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
 {
-  printf(" [cms_hook] acquiring lock\n");
+  printf(" [cms_hook] acquiring lock(%p,%d)\n",msgHandle,lockSomething);
   return 0;
 }
 
-int cmsLck_releaseLockWithTimeoutTraced(char *msgHandle)
+char *cmsObj_get(char *request,char *arg2, char *arg3, char *arg4)
 {
-  printf(" [cms_hook] releasing lock\n");
-  return 0;
-}
-
-char *cmsObj_get(char *request,char *arg2, char *arg3)
-{
-  printf(" [cms_hook] hit cmsObj_get with (%s,%s,%s)\n",request,arg2,arg3);
+  printf(" [cms_hook] hit cmsObj_get with (%p,%p,%p,%p)\n",request,arg2,arg3,arg4);
   return NULL;
 }
 
-char *cmsObj_free(char *obj)
-{
-  printf(" [cms_hook] hit cmsObj_free with %p\n",obj);
-  return NULL;
-}
