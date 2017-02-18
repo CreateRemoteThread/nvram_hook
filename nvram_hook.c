@@ -193,7 +193,7 @@ int cmsMdm_init(int code, char *msgHandle)
   return 0;
 }
 
-int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle)
+int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
 {
   printf(" [cms_hook] acquiring lock\n");
   return 0;
@@ -205,9 +205,9 @@ int cmsLck_releaseLockWithTimeoutTraced(char *msgHandle)
   return 0;
 }
 
-char *cmsObj_get(char *request)
+char *cmsObj_get(char *request,char *arg2, char *arg3)
 {
-  printf(" [cms_hook] hit cmsObj_get with %s\n",request);
+  printf(" [cms_hook] hit cmsObj_get with (%s,%s,%s)\n",request,arg2,arg3);
   return NULL;
 }
 
