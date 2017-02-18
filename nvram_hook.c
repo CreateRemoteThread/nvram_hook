@@ -199,9 +199,22 @@ int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
   return 0;
 }
 
-char *cmsObj_get(char *request,char *arg2, char *arg3, char *arg4)
+int cmsObj_get(char *request,char *arg2, char *arg3, char *arg4)
 {
   printf(" [cms_hook] hit cmsObj_get with (%p,%p,%p,%p)\n",request,arg2,arg3,arg4);
-  return NULL;
+  _memory_peek(arg2);
+  _memory_peek(arg4); 
+  return 0;
 }
 
+void _memory_peek(char *target)
+{
+  // char fucking_magic[16];
+  int i =0;
+  printf(" [0x%08p] : ");
+  for(;i < 16;i++)
+  {
+    printf("%02x",(unsigned char )target[i]);
+  }
+  printf("\n");
+}
