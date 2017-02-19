@@ -200,7 +200,13 @@ int cmsMdm_init(int code, char *msgHandle)
 
 int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
 {
-  printf(" [cms_hook] acquiring lock(%p,%d)\n",msgHandle,lockSomething);
+  printf(" [cms_hook] NOT acquiring lock(%p,%d)\n",msgHandle,lockSomething);
+  return 1;
+}
+
+int cmsLck_dumpInfo()
+{
+  printf(" [cms_hook] cmsLck_dumpInfo(), skipping...\n");
   return 0;
 }
 
@@ -237,13 +243,27 @@ int cmsObj_free(char *x)
 // HTTPD_CFG = 0xC
 int cmsObj_get(int request_type,char **arg2, int arg3, char **ret_addr)
 {
-  printf(" [cms_hook] hit cmsObj_get with (%d,%p,%d,%p)\n",request_type,arg2,arg3,ret_addr);
+  printf(" [cms_hook] hit cmsObj_get with (0x%x,%p,%d,%p)\n",request_type,arg2,arg3,ret_addr);
   if(request_type == 0xC)
   {
     fake_HTTP_CFG[2] = logLevel_debug;
     fake_HTTP_CFG[3] = logDestination_debug;
     ret_addr[0] = (char *)(&fake_HTTP_CFG);
     printf(" [cms_hook] request for HTTP_CFG, faking reply at %p\n",ret_addr[0]);
+    return 0;
+  }
+  else if(request_type == 0x81)
+  {
+    fake_HTTP_CFG[0] = (char *)0x40404040;
+    fake_HTTP_CFG[1] = (char *)0x41404040;
+    fake_HTTP_CFG[2] = (char *)0x42404040;
+    fake_HTTP_CFG[3] = (char *)0x43404040;
+    fake_HTTP_CFG[4] = (char *)0x44404040;
+    fake_HTTP_CFG[5] = (char *)0x45404040;
+    fake_HTTP_CFG[6] = (char *)0x46404040;
+    fake_HTTP_CFG[7] = (char *)0x47404040;
+    ret_addr[0] = (char *)(&fake_HTTP_CFG);
+    printf(" [cms_hook] request type 0x81, faking blob at %p\n",ret_addr[0]);
     return 0;
   }
   else
@@ -256,7 +276,7 @@ int cmsObj_get(int request_type,char **arg2, int arg3, char **ret_addr)
 int cmsMsg_getEventHandle(char *x)
 {
   printf(" [cmsMSg_getEventHandle] called on %p\n",x);
-  _memory_peek(x);
+  // _memory_peek(x);
   return 0;
 }
 
@@ -269,5 +289,6 @@ void _memory_peek(char *target)
   {
     printf("%02x",(unsigned char )target[i]);
   }
+
   printf("\n");
 }
