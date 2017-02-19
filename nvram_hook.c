@@ -13,7 +13,9 @@ struct nvram_entry{
 } nvram_entry;
 
 char *logLevel_debug = "Debug";
-char *fake_HTTP_CFG[2] = {NULL,NULL};
+char *logDestination_debug = "Standard Error";
+// extra padding...
+char *fake_HTTP_CFG[8] = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
 struct nvram_entry *head = NULL;
 
@@ -202,15 +204,46 @@ int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
   return 0;
 }
 
+/*
+int cmsLog_setLevel(int logLevel)
+{
+  printf(" [cms_hook] cms_setLevel, skipping\n");
+  return 0;
+}
+*/
+
+/*
+int cmsLog_setDestination(int logDest)
+{
+  printf(" [cms_hook] cms_setDestination, skipping\n");
+  return 0;
+}
+*/
+
+/*
+int cmsUtl_logLevelStringToEnum(char *logLevel)
+{
+  printf(" [cms_hook] cmsUtl_logLevelStringToEnum(%s)\n",logLevel);
+  return 0;
+}
+*/
+
+int cmsObj_free(char *x)
+{
+  printf(" [cms_hook] attempting to free cmsObj [%p]\n");
+  return 0;
+}
+
 // HTTPD_CFG = 0xC
 int cmsObj_get(int request_type,char **arg2, int arg3, char **ret_addr)
 {
   printf(" [cms_hook] hit cmsObj_get with (%d,%p,%d,%p)\n",request_type,arg2,arg3,ret_addr);
   if(request_type == 0xC)
   {
-    printf(" [cms_hook] request for HTTP_CFG, faking reply\n");
-    fake_HTTP_CFG[1] = logLevel_debug;
+    fake_HTTP_CFG[2] = logLevel_debug;
+    fake_HTTP_CFG[3] = logDestination_debug;
     ret_addr[0] = (char *)(&fake_HTTP_CFG);
+    printf(" [cms_hook] request for HTTP_CFG, faking reply at %p\n",ret_addr[0]);
     return 0;
   }
   else
@@ -218,6 +251,13 @@ int cmsObj_get(int request_type,char **arg2, int arg3, char **ret_addr)
     printf(" [cms_hook] i don't know how to handle this request\n");
     return 0;
   }
+}
+
+int cmsMsg_getEventHandle(char *x)
+{
+  printf(" [cmsMSg_getEventHandle] called on %p\n",x);
+  _memory_peek(x);
+  return 0;
 }
 
 void _memory_peek(char *target)
