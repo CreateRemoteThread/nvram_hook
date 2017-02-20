@@ -198,10 +198,18 @@ int cmsMdm_init(int code, char *msgHandle)
   return 0;
 }
 
+int globalLockCount = 0;
+
 int cmsLck_acquireLockWithTimeoutTraced(char *msgHandle,int lockSomething)
 {
-  printf(" [cms_hook] NOT acquiring lock(%p,%d)\n",msgHandle,lockSomething);
-  return 1;
+  globalLockCount += 1;
+  if(globalLockCount == 2)
+  {
+    printf(" [cms_hook] SKIP acquiring lock(%p,%d)\n",msgHandle,lockSomething);
+    return 1;
+  }
+  printf(" [cms_hook] acquiring lock(%p,%d)\n",msgHandle,lockSomething);
+  return 0;
 }
 
 int cmsLck_dumpInfo()
